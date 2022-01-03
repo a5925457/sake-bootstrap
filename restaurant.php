@@ -1,4 +1,7 @@
-<?php require __DIR__. '\parts\__connect_db.php'?>
+<?php require __DIR__. '\parts\__connect_db.php';
+$title = "合作餐廳列表";
+$pageName = "restaurant_list";
+?>
 <?php include __DIR__ . '\parts\__head.php'?>
 <?php include __DIR__ . '\parts\__navbar.html'?>
 <?php include __DIR__ . '\parts\__sidebar.html'?>

@@ -6,7 +6,7 @@
         <meta name="description" content="" />
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
         <meta name="generator" content="Hugo 0.83.1" />
-        <title>禾酒林 - 後臺管理首頁</title>
+        <title><?= !empty($title) ? "$title - 禾酒林" : '禾酒林 - 後臺管理首頁' ?></title>
         <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/" />
         <!-- Bootstrap core CSS -->
         <link href="./assets/dist/css/bootstrap.min.css" rel="stylesheet" />
