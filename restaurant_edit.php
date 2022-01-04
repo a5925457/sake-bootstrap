@@ -1,6 +1,20 @@
 <?php require __DIR__. '\parts\__connect_db.php';
-$title = "新增合作餐廳";
-$pageName = "restaurant_add";
+$title = "修改合作餐廳";
+$pageName = "restaurant_edit";
+
+if(! isset($_GET['res_id'])) {
+    header('Location: restaurant.php');
+    exit;
+};
+
+$sid = intval($_GET['res_id']);
+$row = $pdo->query("SELECT * FROM `restaurant` WHERE res_id=$sid")->fetch();
+
+if(empty($row)) {
+    header('Location: restaurant.php');
+    exit;
+}
+
 ?>
 <?php include __DIR__ . '\parts\__head.php'?>
 <?php include __DIR__ . '\parts\__navbar.html'?>
@@ -13,9 +27,10 @@ $pageName = "restaurant_add";
     <div class="row justify-content-center">
         <div class="col-8">
             <div class="card">
-                <h5 class="card-header py-3">新增</h5>
+                <h5 class="card-header py-3">修改</h5>
                 <div class="card-body">
                     <form onsubmit="sendData();return false;" name="form1">
+                    <input type="hidden" name="res_id" value="<?= $row['res_id'] ?>">
                         <div class="form-group mb-3">
                             <label for="res_type" class="mb-2">餐廳類型</label>
                             <select class="form-select" aria-label="Default select example" name="res_type" id="res_type">
@@ -42,17 +57,18 @@ $pageName = "restaurant_add";
                                 id="res_name"
                                 name="res_name"
                                 placeholder="請輸入餐廳名稱"
+                                value="<?= htmlentities($row['res_name']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
                         <div class="form-group mb-3">
                             <label for="res_intro" class="form-label">餐廳介紹</label>
-                            <textarea type="text" class="form-control" name="res_intro" id="res_intro" cols="10" rows="5" placeholder="請輸入餐廳介紹"></textarea>
+                            <textarea type="text" class="form-control" name="res_intro" id="res_intro" cols="10" rows="5" placeholder="請輸入餐廳介紹"><?= htmlentities($row['res_intro']) ?></textarea>
                             <div class="form-text"></div>
                         </div>
                         <div class="form-group mb-3">
                             <label for="res_address" class="form-label">餐廳地址</label>
-                            <textarea type="text" class="form-control" name="res_address" id="res_address" cols="10" rows="2" placeholder="請輸入餐廳地址"></textarea>
+                            <textarea type="text" class="form-control" name="res_address" id="res_address" cols="10" rows="2" placeholder="請輸入餐廳地址"><?= htmlentities($row['res_address']) ?></textarea>
                             <div class="form-text"></div>
                         </div>
                         <div class="form-group mb-3">
@@ -122,6 +138,7 @@ $pageName = "restaurant_add";
                                 id="res_t_number"
                                 name="res_t_number"
                                 placeholder="請輸入餐廳電話"
+                                value="<?= htmlentities($row['res_t_number']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
@@ -133,6 +150,7 @@ $pageName = "restaurant_add";
                                 id="web_link"
                                 name="web_link"
                                 placeholder="請輸入餐廳官網網址，若無可略過"
+                                value="<?= htmlentities($row['web_link']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
@@ -144,6 +162,7 @@ $pageName = "restaurant_add";
                                 id="fb_link"
                                 name="fb_link"
                                 placeholder="請輸入餐廳FB網址，若無可略過"
+                                value="<?= htmlentities($row['fb_link']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
@@ -155,6 +174,7 @@ $pageName = "restaurant_add";
                                 id="ig_link"
                                 name="ig_link"
                                 placeholder="請輸入餐廳IG網址，若無可略過"
+                                value="<?= htmlentities($row['ig_link']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
@@ -166,11 +186,12 @@ $pageName = "restaurant_add";
                             id="booking_link"
                             name="booking_link"
                             placeholder="請輸入餐廳訂位網址，若無可略過"
+                            value="<?= htmlentities($row['booking_link']) ?>"
                             />
                             <div class="form-text"></div>
                         </div>
                         <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-secondary w-25">新增</button>
+                            <button type="submit" class="btn btn-secondary w-25">修改</button>
                         </div>
                     </form>
                 </div>
@@ -188,6 +209,8 @@ $pageName = "restaurant_add";
 <script>
     const modal = new bootstrap.Modal(document.querySelector('#exampleModal'));
     
+    const res_type = document.querySelector("#res_type");
+    const res_area = document.querySelector("#res_area");
     const res_name = document.querySelector("#res_name");
     const res_intro = document.querySelector("#res_intro");
     const res_address = document.querySelector("#res_address");
@@ -353,7 +376,7 @@ $pageName = "restaurant_add";
 
         if (isPass === true) {
             const fd = new FormData(document.form1);
-            fetch('restaurant_add-api.php',{
+            fetch('restaurant_edit-api.php',{
             method: 'POST',
             body: fd,
             })
@@ -361,11 +384,11 @@ $pageName = "restaurant_add";
             .then( data => {
             console.log(data);
                 if(data.success) {
-			    	document.querySelector('.modal-body').innerHTML = "資料新增成功";
+			    	document.querySelector('.modal-body').innerHTML = "資料修改成功";
                     document.querySelector('.modal-footer').innerHTML = `<a href="restaurant.php" class="btn btn-secondary">完成</a>`;
                     modal.show();
                 } else {
-                    document.querySelector('.modal-body').innerHTML = data.error || "資料新增發生錯誤";
+                    document.querySelector('.modal-body').innerHTML = data.error || "資料修改發生錯誤";
                     modal.show();
                 }
             })
@@ -373,5 +396,18 @@ $pageName = "restaurant_add";
             
         
 }
+
+    const data = <?= json_encode($row) ?>;  // 將資料庫資料送到前端
+    res_type.value = data.res_type;
+    res_area.value = data.res_area;
+    let time = JSON.parse(data.res_ser_hours);
+    ser_sat.value = time[0];
+    ser_sun.value = time[1];
+    ser_mon.value = time[2];
+    ser_tue.value = time[3];
+    ser_wed.value = time[4];
+    ser_thu.value = time[5];
+    ser_fri.value = time[6];
+
 </script>
 <?php include __DIR__ . '\parts\__foot.html'?>

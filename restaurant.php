@@ -116,7 +116,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <td class="col-2" data-respic="<?= $r['res_id']?>"></td>
                 <td class="col-2" data-menupic="<?= $r['res_id']?>"></td>
                 <td>
-                    <a href="#"><i class="fas fa-pen"></i></a>
+                    <a href="restaurant_edit.php?res_id=<?= $r['res_id']?>"><i class="fas fa-pen"></i></a>
                 </td>
             </tr>
             <tr>

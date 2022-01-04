@@ -8,6 +8,14 @@ $output = [
 ];
 
 
+$res_id = isset($_POST['res_id']) ? intval($_POST['res_id']) : 0;
+
+if(empty($res_id)) {
+    $output['code'] = 400;
+    $output['error'] = '沒有該餐廳編號';
+    echo json_encode($output, JSON_UNESCAPED_UNICODE); exit;
+}
+
 $res_type = $_POST['res_type'] ?? '';
 $res_area = $_POST['res_area'] ?? '';
 $res_name = $_POST['res_name'] ?? '';
@@ -79,9 +87,21 @@ if((!empty($web_link) && !filter_var($web_link, FILTER_VALIDATE_URL)) or (!empty
 
 
 
-$sql = "INSERT INTO `restaurant`(
-                           `res_type`, `res_area`, `res_name`, `res_intro`, `res_address`, `res_ser_hours`, `res_t_number`, `web_link`, `fb_link`, `ig_link`, `booking_link`, `res_create_date`, `res_update_date`
-                           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW() )";
+
+$sql = "UPDATE `restaurant` SET 
+`res_type`=?,
+`res_area`=?,
+`res_name`=?,
+`res_intro`=?,
+`res_address`=?,
+`res_ser_hours`=?,
+`res_t_number`=?,
+`web_link`=?,
+`fb_link`=?,
+`ig_link`=?,
+`booking_link`=?,
+`res_update_date`=NOW()
+WHERE `res_id`=?";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([
@@ -96,11 +116,14 @@ $stmt->execute([
     $fb_link,
     $ig_link,
     $booking_link,
+    $res_id
 ]);
 
-$output['success'] = $stmt->rowCount()==1;  // rowCount() 為1 == 1 ，因此返回true
-$output['rowCount'] = $stmt->rowCount();   // rowCount() 返回受最後一條 SQL 語句影響的行數
 
-
+if($stmt->rowCount()==0) {
+    $output['error'] = '資料未修改';
+} else {
+    $output['success'] = true;
+}
 
 echo json_encode($output, JSON_UNESCAPED_UNICODE);
