@@ -15,8 +15,32 @@ if(empty($row)) {
     exit;
 }
 
+$sql_res_pic = "SELECT * FROM restaurant_pictures WHERE res_id=$sid";
+$res_pic = $pdo->query($sql_res_pic)->fetchAll();
+
+$sql_menu_pic = "SELECT * FROM menu_pictures WHERE res_id=$sid";
+$menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
+
 ?>
 <?php include __DIR__ . '\parts\__head.php'?>
+
+<style>
+    .fas.fa-trash {
+        color: rgba(0, 0, 0, 0);
+        font-size: 35px;
+        transition: .2s
+    }
+    img {
+        transition: .2s
+    }
+    .img-unit:hover .fas.fa-trash {
+        color: rgba(255, 255, 255, 0.7)
+    }
+    .img-unit:hover img {
+        filter: brightness(.5)
+    }
+</style>
+
 <?php include __DIR__ . '\parts\__navbar.html'?>
 <?php include __DIR__ . '\parts\__sidebar.html'?>
 
@@ -190,6 +214,20 @@ if(empty($row)) {
                             />
                             <div class="form-text"></div>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">目前餐廳圖片</label>
+                            <div id="res_pic_area" style="display: flex; gap: .5rem; flex-wrap: wrap;  justify-content: flex-start;" class="mb-2"></div>
+                            <label for="res_pic" class="form-label">新增餐廳圖片　（最多共6張，僅限JPG、PNG、GIF格式）</label>
+                            <input class="form-control" type="file" id="res_pic" multiple name="res_pic[]" accept=".jpg,.jpeg,.png,.gif">
+                            <div class="form-text"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">目前菜單圖片</label>
+                            <div id="menu_pic_area" style="display: flex; gap: .5rem; flex-wrap: wrap;  justify-content: flex-start;" class="mb-2"></div>
+                            <label for="menu_pic" class="form-label">新增菜單圖片　（最多共6張，僅限JPG、PNG、GIF格式）</label>
+                            <input class="form-control" type="file" id="menu_pic" multiple name="menu_pic[]" accept=".jpg,.jpeg,.png,.gif">
+                            <div class="form-text"></div>
+                        </div>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-secondary w-25">修改</button>
                         </div>
@@ -208,7 +246,8 @@ if(empty($row)) {
 <!-- 如果要 modal 的話留下面的 script -->
 <script>
     const modal = new bootstrap.Modal(document.querySelector('#exampleModal'));
-    
+    const modalBody = document.querySelector('.modal-body');
+
     const res_type = document.querySelector("#res_type");
     const res_area = document.querySelector("#res_area");
     const res_name = document.querySelector("#res_name");
@@ -228,10 +267,107 @@ if(empty($row)) {
     const fb_link = document.querySelector("#fb_link");
     const ig_link = document.querySelector("#ig_link");
     const booking_link = document.querySelector("#booking_link");
+
+    const res_pic = document.querySelector("#res_pic");
+    const menu_pic = document.querySelector("#menu_pic");
+
+    const res_pic_area = document.querySelector("#res_pic_area");
+    const menu_pic_area = document.querySelector("#menu_pic_area");
     
     const tele_re = /\d{2,4}-?\d{3,4}-?\d{3,4}#?(\d+)?/;
     const url_re = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/i;
     
+
+    const data = <?= json_encode($row) ?>;  // 將資料庫資料送到前端
+    res_type.value = data.res_type;
+    res_area.value = data.res_area;
+    let time = JSON.parse(data.res_ser_hours);
+    ser_sat.value = time[0];
+    ser_sun.value = time[1];
+    ser_mon.value = time[2];
+    ser_tue.value = time[3];
+    ser_wed.value = time[4];
+    ser_thu.value = time[5];
+    ser_fri.value = time[6];
+
+    const resPic = <?= json_encode($res_pic) ?>;  // 將餐廳圖片資料庫資料送到前端
+    const menuPic = <?= json_encode($menu_pic) ?>;  // 將餐廳圖片資料庫資料送到前端
+
+    // render 已有餐廳圖片
+    resPic.forEach( item => {
+        res_pic_area.innerHTML += `
+        <div class="img-unit res" data-res="${item.res_pic_id}" style="display: inline-block; position: relative;">
+            <img style="width:140px; height:140px; object-fit: cover" src="./img/res_pic/${item.res_pic_name}">
+            <div class="del-div" style="position: absolute; left:50%; top:50%; transform: translate(-50%, -50%)">
+                <i class="fas fa-trash"></i>
+            </div>
+        </div>
+        `
+    })
+    if (resPic.length == 0) {
+        res_pic_area.innerHTML += `
+        <div class="alert alert-dark mt-2 w-100" role="alert">目前無餐廳圖片</div>
+        `
+    }
+
+    // render 已有菜單圖片
+    menuPic.forEach( item => {
+        menu_pic_area.innerHTML += `
+        <div class="img-unit menu" data-menu="${item.menu_pic_id}" style="display: inline-block; position: relative;">
+            <img style="width:140px; height:140px; object-fit: cover" src="./img/menu_pic/${item.menu_pic_name}">
+            <div class="del-div" style="position: absolute; left:50%; top:50%; transform: translate(-50%, -50%)">
+                <i class="fas fa-trash"></i>
+            </div>
+        </div>
+        `
+    })
+    if (menuPic.length == 0) {
+        menu_pic_area.innerHTML += `
+        <div class="alert alert-dark mt-2 w-100" role="alert">目前無菜單圖片</div>
+        `
+    }
+
+
+    const resUnit = document.querySelectorAll("div[data-res]");
+    const menuUnit = document.querySelectorAll("div[data-menu]");
+
+    // 刪除餐廳圖片(非同步)
+    resUnit.forEach ( unit => {
+        unit.addEventListener("click", function(e) {
+            deleteResPic(e.currentTarget.dataset.res)
+        })
+    })
+    function deleteResPic(res_pic_id){
+        modalBody.innerHTML = `確定要刪除該張圖片嗎？`;
+        document.querySelector('.modal-footer').innerHTML = `<a href="javascript: deleteResPicFetch(${res_pic_id})" class="btn btn-secondary">刪除</a>`;
+        modal.show();
+    }
+    function deleteResPicFetch(res_pic_id) {
+        fetch(`res_pic_delete-api.php?res_pic_id=${res_pic_id}`);
+        document.querySelector(`[data-res="${res_pic_id}"]`).remove();
+        modal.hide();
+    }
+
+    // 刪除菜單圖片(非同步)
+    menuUnit.forEach ( unit => {
+        unit.addEventListener("click", function(e) {
+            deleteMenuPic(e.currentTarget.dataset.menu)
+        })
+    })
+    function deleteMenuPic(menu_pic_id){
+        modalBody.innerHTML = `確定要刪除該張圖片嗎？`;
+        document.querySelector('.modal-footer').innerHTML = `<a href="javascript: deleteMenuPicFetch(${menu_pic_id})" class="btn btn-secondary">刪除</a>`;
+        modal.show();
+    }
+    function deleteMenuPicFetch(menu_pic_id) {
+        fetch(`menu_pic_delete-api.php?menu_pic_id=${menu_pic_id}`);
+        document.querySelector(`[data-menu="${menu_pic_id}"]`).remove();
+        modal.hide();
+    }
+
+
+
+
     function sendData(){
 
         res_name.nextElementSibling.innerHTML = '';
@@ -372,6 +508,19 @@ if(empty($row)) {
              請輸入正確網址
             </div>`;
         }
+        // 檢查圖片總數量
+        if ( (res_pic.files.length + document.getElementsByClassName("res").length ) > 6) {
+            isPass = false;
+            res_pic.nextElementSibling.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             餐廳圖片最多為六張圖片
+            </div>`;
+        }
+        if ( (menu_pic.files.length + document.getElementsByClassName("menu").length  ) > 6) {
+            isPass = false;
+            menu_pic.nextElementSibling.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             菜單圖片最多為六張圖片
+            </div>`;
+        }
 
 
         if (isPass === true) {
@@ -397,17 +546,7 @@ if(empty($row)) {
         
 }
 
-    const data = <?= json_encode($row) ?>;  // 將資料庫資料送到前端
-    res_type.value = data.res_type;
-    res_area.value = data.res_area;
-    let time = JSON.parse(data.res_ser_hours);
-    ser_sat.value = time[0];
-    ser_sun.value = time[1];
-    ser_mon.value = time[2];
-    ser_tue.value = time[3];
-    ser_wed.value = time[4];
-    ser_thu.value = time[5];
-    ser_fri.value = time[6];
 
+    
 </script>
 <?php include __DIR__ . '\parts\__foot.html'?>

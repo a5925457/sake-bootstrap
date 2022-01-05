@@ -108,7 +108,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <td class="col-1"><?= htmlentities($r['res_intro']) ?></td>
                 <td class="col-1"><?= htmlentities($r['res_address']) ?></td>
                 <td class="col-3" data-time="<?= $r['res_id']?>"></td>
-                <td class="col-1"><?= htmlentities($r['res_t_number']) ?></td>
+                <td class="col-1" style="overflow-wrap: break-word;"><?= htmlentities($r['res_t_number']) ?></td>
                 <td class="col-1" style="overflow-wrap: break-word;"><?= htmlentities($r['web_link']) ?></td>
                 <td class="col-1" style="overflow-wrap: break-word;"><?= htmlentities($r['fb_link']) ?></td>
                 <td class="col-1" style="overflow-wrap: break-word;"><?= htmlentities($r['ig_link']) ?></td>
@@ -210,7 +210,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
         tds.forEach(td => {
             if(td.dataset.respic == allResPic[i].res_id) {
                 document.querySelector(`[data-respic="${td.dataset.respic}"]`).innerHTML += `
-                <img style="width:200px; object-fit:cover; margin-bottom:1rem" src="./img/res_pic/${allResPic[i].res_pic_name}">
+                <img style="width:100px; object-fit:cover; margin-bottom:1rem" src="./img/res_pic/${allResPic[i].res_pic_name}">
                 `
             }
         })
@@ -221,7 +221,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
         tds.forEach(td => {
             if(td.dataset.menupic == allMenuPic[i].res_id) {
                 document.querySelector(`[data-menupic="${td.dataset.menupic}"]`).innerHTML += `
-                <img style="width:200px; object-fit:cover; margin-bottom:1rem" src="./img/menu_pic/${allMenuPic[i].menu_pic_name}">
+                <img style="width:100px; object-fit:cover; margin-bottom:1rem" src="./img/menu_pic/${allMenuPic[i].menu_pic_name}">
                 `
             }
         })

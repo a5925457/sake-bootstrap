@@ -1,6 +1,8 @@
 <?php
 require __DIR__. '/parts/__connect_db.php';
 
+header('content-type: application/json');
+
 $output = [
     'success' => false,
     'code' => 0,
@@ -76,6 +78,14 @@ if((!empty($web_link) && !filter_var($web_link, FILTER_VALIDATE_URL)) or (!empty
     echo json_encode($output, JSON_UNESCAPED_UNICODE);
     exit;
 }
+$resfile =  $_FILES['res_pic']['name'];
+$menufile =  $_FILES['menu_pic']['name'];
+if( ( count($resfile) > 6 ) or ( count($menufile) > 6 ) ) {
+    $output['code'] = 407;
+    $output['error'] = '上傳檔案數量超過';
+    echo json_encode($output, JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 
 
@@ -101,6 +111,84 @@ $stmt->execute([
 $output['success'] = $stmt->rowCount()==1;  // rowCount() 為1 == 1 ，因此返回true
 $output['rowCount'] = $stmt->rowCount();   // rowCount() 返回受最後一條 SQL 語句影響的行數
 
+$res_id = $pdo->lastInsertId();
 
+
+
+// 檔案上傳
+
+$output['res_id'] = $res_id ;   // 抓取 res_id
+
+$res_pic_folder = __DIR__. '/img/res_pic';
+$menu_pic_folder = __DIR__. '/img/menu_pic';
+
+
+$exts = [
+    'image/jpeg' => '.jpg',
+    'image/png' => '.png',
+    'image/gif' => '.gif'
+];
+
+// 餐廳圖片上傳
+if (! empty($_FILES['res_pic']) and !empty($_FILES['res_pic']['name'])) {
+    foreach($_FILES['res_pic']['name'] as $i=>$name) {
+        $ext = $exts[$_FILES['res_pic']['type'][$i]]?? '';  // 拿到對應的副檔名
+
+        if (!empty($ext)) {
+            $filename = sha1($name . rand()) . $ext;    
+            $target = $res_pic_folder . '/' . $filename;
+            if( move_uploaded_file($_FILES['res_pic']['tmp_name'][$i], $target)) {
+                // $output['success'] ++;
+                // $output['files'][] = $filename;
+                $res_pic_sql = "INSERT INTO `restaurant_pictures`(`res_pic_name`, `res_id`) VALUES (?, ?)";
+                $res_pic_stmt = $pdo->prepare($res_pic_sql);
+                $res_pic_stmt->execute([
+                $filename,
+                $res_id
+                ]);
+            } else {
+                // $output['error'] = '無法移動檔案';
+            }
+    
+        } else {
+            // $output['error'] = '不合法的檔案類型';
+        }
+
+    }
+}
+ else {
+        // $output['error'] = '沒有上傳檔案';
+}
+
+// 菜單圖片上傳
+if (! empty($_FILES['menu_pic']) and !empty($_FILES['menu_pic']['name'])) {
+    foreach($_FILES['menu_pic']['name'] as $i=>$name) {
+        $ext = $exts[$_FILES['menu_pic']['type'][$i]]?? '';  // 拿到對應的副檔名
+
+        if (!empty($ext)) {
+            $filename = sha1($name . rand()) . $ext;    
+            $target = $menu_pic_folder . '/' . $filename;
+            if( move_uploaded_file($_FILES['menu_pic']['tmp_name'][$i], $target)) {
+                // $output['success'] ++;
+                // $output['files'][] = $filename;
+                $menu_pic_sql = "INSERT INTO `menu_pictures`(`menu_pic_name`, `res_id`) VALUES (?, ?)";
+                $menu_pic_stmt = $pdo->prepare($menu_pic_sql);
+                $menu_pic_stmt->execute([
+                $filename,
+                $res_id
+                ]);
+            } else {
+                // $output['error'] = '無法移動檔案';
+            }
+    
+        } else {
+            // $output['error'] = '不合法的檔案類型';
+        }
+
+    }
+}
+ else {
+        // $output['error'] = '沒有上傳檔案';
+}
 
 echo json_encode($output, JSON_UNESCAPED_UNICODE);

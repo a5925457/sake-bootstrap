@@ -169,6 +169,16 @@ $pageName = "restaurant_add";
                             />
                             <div class="form-text"></div>
                         </div>
+                        <div class="mb-3">
+                          <label for="res_pic" class="form-label">餐廳圖片　（最多選6張，僅限JPG、PNG、GIF格式）</label>
+                          <input class="form-control" type="file" id="res_pic" multiple name="res_pic[]" accept=".jpg,.jpeg,.png,.gif">
+                          <div class="form-text"></div>
+                        </div>
+                        <div class="mb-3">
+                          <label for="menu_pic" class="form-label">菜單圖片　（最多選6張，僅限JPG、PNG、GIF格式）</label>
+                          <input class="form-control" type="file" id="menu_pic" multiple name="menu_pic[]" accept=".jpg,.jpeg,.png,.gif">
+                          <div class="form-text"></div>
+                        </div>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-secondary w-25">新增</button>
                         </div>
@@ -205,6 +215,9 @@ $pageName = "restaurant_add";
     const fb_link = document.querySelector("#fb_link");
     const ig_link = document.querySelector("#ig_link");
     const booking_link = document.querySelector("#booking_link");
+
+    const res_pic = document.querySelector("#res_pic");
+    const menu_pic = document.querySelector("#menu_pic");
     
     const tele_re = /\d{2,4}-?\d{3,4}-?\d{3,4}#?(\d+)?/;
     const url_re = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/i;
@@ -347,6 +360,19 @@ $pageName = "restaurant_add";
             isPass = false;
             booking_link.nextElementSibling.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
              請輸入正確網址
+            </div>`;
+        }
+        // 檢查上傳檔案數量
+        if (res_pic.files.length > 6) {
+            isPass = false;
+            res_pic.nextElementSibling.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             餐廳圖片最多上傳六張圖片
+            </div>`;
+        }
+        if (menu_pic.files.length > 6) {
+            isPass = false;
+            menu_pic.nextElementSibling.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             菜單圖片最多上傳六張圖片
             </div>`;
         }
 
