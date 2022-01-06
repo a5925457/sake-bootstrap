@@ -28,7 +28,6 @@ $pageName = "restaurant_add";
         border-top-style: none;
         border-left-style:none;
         border-right-style:none;
-        width: 80%;
         outline: unset;
     }
     .menu-input {
@@ -718,7 +717,7 @@ $pageName = "restaurant_add";
              未上傳圖片
             </div>`;
             }
-            if ( (document.querySelector("#sp_menu_pic_name_1").files.length != 0) && (document.querySelector("#sp_menu1").value.length == 0) ) {
+            if ( (document.querySelector("#sp_menu_pic_name_2").files.length != 0) && (document.querySelector("#sp_menu2").value.length == 0) ) {
             isPass = false;
             menualert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
              未輸入特別菜單名
@@ -732,7 +731,7 @@ $pageName = "restaurant_add";
              未上傳圖片
             </div>`;
             }
-            if ( (document.querySelector("#sp_menu_pic_name_1").files.length != 0) && (document.querySelector("#sp_menu1").value.length == 0) ) {
+            if ( (document.querySelector("#sp_menu_pic_name_3").files.length != 0) && (document.querySelector("#sp_menu3").value.length == 0) ) {
             isPass = false;
             menualert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
              未輸入特別菜單名

@@ -54,7 +54,7 @@ $menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
     <div class="row justify-content-center">
         <div class="col-8">
             <div class="card">
-                <h5 class="card-header py-3">修改</h5>
+                <h5 class="card-header py-3">修改合作餐廳</h5>
                 <div class="card-body">
                     <form onsubmit="sendData();return false;" name="form1">
                     <input type="hidden" name="res_id" value="<?= $row['res_id'] ?>">

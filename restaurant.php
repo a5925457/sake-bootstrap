@@ -181,7 +181,13 @@ $all_sp_menu = $pdo->query($sql_sp_menu)->fetchAll();
             resId.push(checked[i].value);
         }
         newString = resId.join(",")
-        delete_it(newString)
+        if(resId.length == 0) {
+            modalBody.innerHTML = `目前尚未選取項目。`;
+            document.querySelector('.modal-footer').innerHTML = `<button type="button" onclick="modal.hide()" class="btn btn-secondary">確認</button>`;
+            modal.show();
+        } else {
+            delete_it(newString)
+        }
     }
 
     const all = <?= json_encode($all) ?>;  // 將資料庫資料送到前端
