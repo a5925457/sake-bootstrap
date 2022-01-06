@@ -33,6 +33,9 @@ $menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
     img {
         transition: .2s
     }
+    .img-unit {
+        cursor: pointer;   
+    }
     .img-unit:hover .fas.fa-trash {
         color: rgba(255, 255, 255, 0.7)
     }
@@ -96,7 +99,7 @@ $menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                             <div class="form-text"></div>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="res_ser_hours" class="mb-2">營業時間　（例如：12:00–15:00 18:00–22:00 或休息）</label>
+                            <label for="res_ser_hours" class="mb-2">營業時間<small>（例如：12:00–15:00 18:00–22:00 或休息）</small></label>
                             <input
                                 type="text"
                                 class="form-control mb-3"
@@ -217,14 +220,14 @@ $menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                         <div class="mb-3">
                             <label class="form-label">目前餐廳圖片</label>
                             <div id="res_pic_area" style="display: flex; gap: .5rem; flex-wrap: wrap;  justify-content: flex-start;" class="mb-2"></div>
-                            <label for="res_pic" class="form-label">新增餐廳圖片　（最多共6張，僅限JPG、PNG、GIF格式）</label>
+                            <label for="res_pic" class="form-label">新增餐廳圖片<small>（最多共6張，僅限JPG、PNG、GIF格式）</small></label>
                             <input class="form-control" type="file" id="res_pic" multiple name="res_pic[]" accept=".jpg,.jpeg,.png,.gif">
                             <div class="form-text"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">目前菜單圖片</label>
                             <div id="menu_pic_area" style="display: flex; gap: .5rem; flex-wrap: wrap;  justify-content: flex-start;" class="mb-2"></div>
-                            <label for="menu_pic" class="form-label">新增菜單圖片　（最多共6張，僅限JPG、PNG、GIF格式）</label>
+                            <label for="menu_pic" class="form-label">新增菜單圖片<small>（最多共6張，僅限JPG、PNG、GIF格式）</small></label>
                             <input class="form-control" type="file" id="menu_pic" multiple name="menu_pic[]" accept=".jpg,.jpeg,.png,.gif">
                             <div class="form-text"></div>
                         </div>

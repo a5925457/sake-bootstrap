@@ -32,6 +32,9 @@ $all_res_pic = $pdo->query($sql_res_pic)->fetchAll();
 $sql_menu_pic = "SELECT * FROM menu_pictures";
 $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
 
+$sql_sp_menu = "SELECT * FROM special_menu";
+$all_sp_menu = $pdo->query($sql_sp_menu)->fetchAll();
+
 ?>
 <?php include __DIR__ . '\parts\__head.php'?>
 <?php include __DIR__ . '\parts\__navbar.html'?>
@@ -41,7 +44,10 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
 <!-- 主要的內容放在 __main_start 與 __main_end 之間 -->
 <!-- table -->
 <div class="d-flex justify-content-between mt-5">
+    <div>
     <button type="button" class="btn btn-secondary btn-sm" onclick="deleteMany()">刪除選擇項目</button>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='restaurant_add.php'">新增合作餐廳</button>
+    </div>
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item <?= 1==$page ? 'disabled' : '' ?>">
@@ -70,8 +76,8 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <th>
                     <input class="form-check-input" type="checkbox" value="" id="isAll"/>
                 </th>
-                <th>
-                    <i class="fas fa-trash"></i>
+                <th style="flex: 0 0 auto; width: 3%; text-align: center">
+                    刪除
                 </th>
                 <th>#</th>
                 <th class="col-1">餐廳類型</th>
@@ -87,8 +93,9 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <th class="col-1">訂位網址</th>
                 <th class="col-2">餐廳圖片</th>
                 <th class="col-2">菜單圖片</th>
-                <th>
-                    <i class="fas fa-pen"></i>
+                <th class="col-2">特別菜單</th>
+                <th style="flex: 0 0 auto; width: 3%; text-align: center">
+                    編輯
                 </th>
             </tr>
         </thead>
@@ -98,7 +105,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <td>
                     <input class="form-check-input check" type="checkbox" value="<?= $r['res_id']?>" />
                 </td>
-                <td>
+                <td style="flex: 0 0 auto; width: 3%; text-align: center">
                     <a href="javascript: delete_it(<?=$r['res_id']?>)"><i class="fas fa-trash"></i></a>
                 </td>
                 <td><?= htmlentities($r['res_id']) ?></td>
@@ -115,7 +122,8 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
                 <td class="col-1" style="overflow-wrap: break-word;"><?= htmlentities($r['booking_link']) ?></td>
                 <td class="col-2" data-respic="<?= $r['res_id']?>"></td>
                 <td class="col-2" data-menupic="<?= $r['res_id']?>"></td>
-                <td>
+                <td class="col-2" data-spmenu="<?= $r['res_id']?>"></td>
+                <td style="flex: 0 0 auto; width: 3%; text-align: center">
                     <a href="restaurant_edit.php?res_id=<?= $r['res_id']?>"><i class="fas fa-pen"></i></a>
                 </td>
             </tr>
@@ -179,6 +187,7 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
     const all = <?= json_encode($all) ?>;  // 將資料庫資料送到前端
     const allResPic = <?= json_encode($all_res_pic) ?>;  // 將餐廳圖片資料庫資料送到前端
     const allMenuPic = <?= json_encode($all_menu_pic) ?>;  // 將餐廳圖片資料庫資料送到前端
+    const allSpMenu = <?= json_encode($all_sp_menu) ?>;  // 將餐廳圖片資料庫資料送到前端
 
     // render 營業時間
     for (let i = 0; i< all.length; i++) {
@@ -222,6 +231,23 @@ $all_menu_pic = $pdo->query($sql_menu_pic)->fetchAll();
             if(td.dataset.menupic == allMenuPic[i].res_id) {
                 document.querySelector(`[data-menupic="${td.dataset.menupic}"]`).innerHTML += `
                 <img style="width:100px; object-fit:cover; margin-bottom:1rem" src="./img/menu_pic/${allMenuPic[i].menu_pic_name}">
+                `
+            }
+        })
+    }
+
+    // render 特別菜單
+    for (let i = 0; i<allSpMenu.length; i++) {
+        tds.forEach(td => {
+            if(td.dataset.spmenu == allSpMenu[i].res_id) {
+                document.querySelector(`[data-spmenu="${td.dataset.spmenu}"]`).innerHTML += `
+
+                <div class="card" style="width: 10rem;">
+                  <img src="./img/sp_menu/${allSpMenu[i].sp_menu_pic_name}" class="card-img-top">
+                  <div class="card-body">
+                    <p class="card-text">${allSpMenu[i].sp_menu_name}</p>
+                  </div>
+                </div>
                 `
             }
         })

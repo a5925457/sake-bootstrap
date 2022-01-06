@@ -40,6 +40,10 @@ $fb_link = $_POST['fb_link'] ?? '';
 $ig_link = $_POST['ig_link'] ?? '';
 $booking_link = $_POST['booking_link'] ?? '';
 
+$sp_menu_name_1 = $_POST['sp_menu_name_1'] ?? '';
+$sp_menu_name_2 = $_POST['sp_menu_name_2'] ?? '';
+$sp_menu_name_3 = $_POST['sp_menu_name_3'] ?? '';
+
 
 // 檢查欄位資料
 if(empty($res_name)) {
@@ -121,6 +125,7 @@ $output['res_id'] = $res_id ;   // 抓取 res_id
 
 $res_pic_folder = __DIR__. '/img/res_pic';
 $menu_pic_folder = __DIR__. '/img/menu_pic';
+$sp_menu_folder = __DIR__. '/img/sp_menu';
 
 
 $exts = [
@@ -188,6 +193,89 @@ if (! empty($_FILES['menu_pic']) and !empty($_FILES['menu_pic']['name'])) {
     }
 }
  else {
+        // $output['error'] = '沒有上傳檔案';
+}
+
+//  特別菜單上傳
+//  1號
+if( !empty($_FILES['sp_menu_pic_name1'])) {
+    $ext = $exts[$_FILES['sp_menu_pic_name1']['type']] ?? '';  // 拿到對應的副檔名
+
+    if (!empty($ext)) {
+        $filename = sha1($_FILES['sp_menu_pic_name1']['name'] . rand()) . $ext;    
+        $target = $sp_menu_folder . '/' . $filename;
+        if( move_uploaded_file($_FILES['sp_menu_pic_name1']['tmp_name'], $target)) {
+            // $output['success'] = true;
+            // $output['filename'] = $filename;
+            $sp_menu_sql = "INSERT INTO `special_menu`(`sp_menu_pic_name`, `sp_menu_name`, `res_id`) VALUES (?, ?, ?)";
+            $sp_menu_stmt = $pdo->prepare($sp_menu_sql);
+            $sp_menu_stmt->execute([
+            $filename,
+            $sp_menu_name_1,
+            $res_id
+            ]);
+        } else {
+            // $output['error'] = '無法移動檔案';   // 若有權限問題將無法移動檔案
+        }
+
+    } else {
+        // $output['error'] = '不合法的檔案類型';
+    }
+} else {
+        // $output['error'] = '沒有上傳檔案';
+}
+//  2號
+if( !empty($_FILES['sp_menu_pic_name2'])) {
+    $ext = $exts[$_FILES['sp_menu_pic_name2']['type']] ?? '';  // 拿到對應的副檔名
+
+    if (!empty($ext)) {
+        $filename = sha1($_FILES['sp_menu_pic_name2']['name'] . rand()) . $ext;    
+        $target = $sp_menu_folder . '/' . $filename;
+        if( move_uploaded_file($_FILES['sp_menu_pic_name2']['tmp_name'], $target)) {
+            // $output['success'] = true;
+            // $output['filename'] = $filename;
+            $sp_menu_sql = "INSERT INTO `special_menu`(`sp_menu_pic_name`, `sp_menu_name`, `res_id`) VALUES (?, ?, ?)";
+            $sp_menu_stmt = $pdo->prepare($sp_menu_sql);
+            $sp_menu_stmt->execute([
+            $filename,
+            $sp_menu_name_2,
+            $res_id
+            ]);
+        } else {
+            // $output['error'] = '無法移動檔案';   // 若有權限問題將無法移動檔案
+        }
+
+    } else {
+        // $output['error'] = '不合法的檔案類型';
+    }
+} else {
+        // $output['error'] = '沒有上傳檔案';
+}
+//  3號
+if( !empty($_FILES['sp_menu_pic_name3'])) {
+    $ext = $exts[$_FILES['sp_menu_pic_name3']['type']] ?? '';  // 拿到對應的副檔名
+
+    if (!empty($ext)) {
+        $filename = sha1($_FILES['sp_menu_pic_name3']['name'] . rand()) . $ext;    
+        $target = $sp_menu_folder . '/' . $filename;
+        if( move_uploaded_file($_FILES['sp_menu_pic_name3']['tmp_name'], $target)) {
+            // $output['success'] = true;
+            // $output['filename'] = $filename;
+            $sp_menu_sql = "INSERT INTO `special_menu`(`sp_menu_pic_name`, `sp_menu_name`, `res_id`) VALUES (?, ?, ?)";
+            $sp_menu_stmt = $pdo->prepare($sp_menu_sql);
+            $sp_menu_stmt->execute([
+            $filename,
+            $sp_menu_name_3,
+            $res_id
+            ]);
+        } else {
+            // $output['error'] = '無法移動檔案';   // 若有權限問題將無法移動檔案
+        }
+
+    } else {
+        // $output['error'] = '不合法的檔案類型';
+    }
+} else {
         // $output['error'] = '沒有上傳檔案';
 }
 

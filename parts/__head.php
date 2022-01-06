@@ -103,6 +103,10 @@
             .card h5 {
                 font-weight: 600;
             }
+            small {
+                font-size: .5rem;
+                color: #666
+            }
         </style>
         <!-- Custom styles for this template -->
         <link href="parts/dashboard.css" rel="stylesheet" />

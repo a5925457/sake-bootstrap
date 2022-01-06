@@ -3,6 +3,33 @@ $title = "新增合作餐廳";
 $pageName = "restaurant_add";
 ?>
 <?php include __DIR__ . '\parts\__head.php'?>
+<style>
+    .plus-icon i {
+        font-size: 2rem;
+        transition: .2s
+    }
+    .add-card:hover .plus-icon i {
+        font-size: 2.5rem
+    }
+    .click-image {
+        background-color: #aaa;
+        color:#ddd;
+        border:none;
+        border-radius: .25rem .25rem 0 0
+    }
+    input:focus {
+        border: none;
+        outline: unset;
+    }
+    .menu-input {
+        border:1px #aaa;
+        border-bottom-style: solid;
+        border-top-style: none;
+        border-left-style:none;
+        border-right-style:none;
+        width: 60%
+    }
+</style>
 <?php include __DIR__ . '\parts\__navbar.html'?>
 <?php include __DIR__ . '\parts\__sidebar.html'?>
 
@@ -13,9 +40,9 @@ $pageName = "restaurant_add";
     <div class="row justify-content-center">
         <div class="col-8">
             <div class="card">
-                <h5 class="card-header py-3">新增</h5>
+                <h5 class="card-header py-3">新增合作餐廳</h5>
                 <div class="card-body">
-                    <form onsubmit="sendData();return false;" name="form1">
+                    <form onsubmit="sendData();return false;" name="form1" runat="server">
                         <div class="form-group mb-3">
                             <label for="res_type" class="mb-2">餐廳類型</label>
                             <select class="form-select" aria-label="Default select example" name="res_type" id="res_type">
@@ -56,7 +83,7 @@ $pageName = "restaurant_add";
                             <div class="form-text"></div>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="res_ser_hours" class="mb-2">營業時間　（例如：12:00–15:00 18:00–22:00 或休息）</label>
+                            <label for="res_ser_hours" class="mb-2">營業時間<small>（例如：12:00–15:00 18:00–22:00 或休息）</small></label>
                             <input
                                 type="text"
                                 class="form-control mb-3"
@@ -170,14 +197,45 @@ $pageName = "restaurant_add";
                             <div class="form-text"></div>
                         </div>
                         <div class="mb-3">
-                          <label for="res_pic" class="form-label">餐廳圖片　（最多選6張，僅限JPG、PNG、GIF格式）</label>
+                          <label for="res_pic" class="form-label">餐廳圖片<small>（最多選6張，僅限JPG、PNG、GIF格式）</small></label>
                           <input class="form-control" type="file" id="res_pic" multiple name="res_pic[]" accept=".jpg,.jpeg,.png,.gif">
                           <div class="form-text"></div>
                         </div>
                         <div class="mb-3">
-                          <label for="menu_pic" class="form-label">菜單圖片　（最多選6張，僅限JPG、PNG、GIF格式）</label>
+                          <label for="menu_pic" class="form-label">菜單圖片<small>（最多選6張，僅限JPG、PNG、GIF格式）</small></label>
                           <input class="form-control" type="file" id="menu_pic" multiple name="menu_pic[]" accept=".jpg,.jpeg,.png,.gif">
                           <div class="form-text"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">特別菜單<small>（最多為3道）</small></label>
+                            <div id="sp_menu_area" class="mb-2 d-flex flex-wrap">
+                                <!-- add card -->
+                                <div class="card col-12 col-xl-4 add-card" style="cursor: pointer">
+                                  <div class="card-body d-flex justify-content-center align-items-center plus-icon">
+                                      <i class="fas fa-plus-circle" style="color: #999;"></i>
+                                  </div>
+                                </div>
+                                <!-- sp menu -->
+                                <!-- <div class="card col-12 col-xl-4" id="sp_menu_card_1">
+                                    <div class="text-center" style="height:200px; line-height: 200px;">
+                                        <button onclick='sp_menu_pic_name_1.click()' class="w-100 click-image" id="click_image_1">點擊選擇圖片</button>
+                                      <input style="display:none" type="file" id="sp_menu_pic_name_1" name="sp_menu_pic_name" accept=".jpg,.jpeg,.png,.gif">
+                                    </div>
+                                    <div class="card-body d-flex justify-content-center">
+                                      <input type="text" id="sp_menu1" name="sp_menu_name_1" class="text-center" placeholder="輸入特別菜單名" style="border:1px #aaa; border-bottom-style: solid;border-top-style: none;border-left-style:none;border-right-style:none; width: 60%">
+                                    </div>
+                                    <i class="fas fa-trash" style="padding: .5rem" id="delete1"></i>
+                                </div> -->
+                                <!-- sp menu card -->
+                                <!-- <div class="card col-12 col-xl-4">
+                                    <img src="https://fakeimg.pl/700x200/" style="width:100%; height:200px; object-fit:cover">
+                                    <div class="card-body">
+                                      <p class="card-text text-center">test</p>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div class="form-text" id="picalert"></div>
+                            <div class="form-text" id="menualert"></div>
                         </div>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-secondary w-25">新增</button>
@@ -216,12 +274,272 @@ $pageName = "restaurant_add";
     const ig_link = document.querySelector("#ig_link");
     const booking_link = document.querySelector("#booking_link");
 
-    const res_pic = document.querySelector("#res_pic");
-    const menu_pic = document.querySelector("#menu_pic");
-    
     const tele_re = /\d{2,4}-?\d{3,4}-?\d{3,4}#?(\d+)?/;
     const url_re = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/i;
+
+    const res_pic = document.querySelector("#res_pic");
+    const menu_pic = document.querySelector("#menu_pic");
+
+    const sp_menu_area = document.querySelector("#sp_menu_area");
+    const addCard = document.querySelector(".add-card");
+
+    const picalert = document.querySelector("#picalert");
+    const menualert = document.querySelector("#menualert");
     
+    function menu1 () {
+        let menu_card = document.createElement('div');
+        menu_card.setAttribute("id", "sp_menu_card_1");
+        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_1");
+            let top = document.createElement('div');
+            top.classList.add("text-center")
+            top.style.height = "200px";
+            top.style.lineHeight = "200px";
+            let imgButton = document.createElement('button');
+            imgButton.onclick=function(){document.getElementById("sp_menu_pic_name_1").click()};;
+            imgButton.classList.add("w-100", "click-image");
+            imgButton.setAttribute("id", "click_image_1");
+            imgButton.setAttribute("type", "button");
+            imgButton.innerHTML = "點擊選擇圖片";
+            let imgInput = document.createElement('input');
+            imgInput.style.display ="none";
+            imgInput.setAttribute("type", "file");
+            imgInput.setAttribute("id", "sp_menu_pic_name_1");
+            imgInput.setAttribute("name", "sp_menu_pic_name1");
+            imgInput.setAttribute("accept", ".jpg,.jpeg,.png,.gif");
+            top.appendChild(imgButton);
+            top.appendChild(imgInput);
+
+
+            let bottom = document.createElement('div');
+            bottom.classList.add("card-body", "d-flex", "justify-content-center");
+                let textInput = document.createElement('input');
+                textInput.classList.add("text-center", "menu-input");
+                textInput.setAttribute("type", "text");
+                textInput.setAttribute("id", "sp_menu1");
+                textInput.setAttribute("name", "sp_menu_name_1");
+                textInput.setAttribute("placeholder", "輸入特別菜單名");
+            bottom.appendChild(textInput);
+
+            // TODO: CARD 刪除
+            // let delDiv = document.createElement('div');
+            // let del = document.createElement('i');
+            // del.classList.add("fas", "fa-trash");
+            // del.style.padding = ".5rem";
+            // del.setAttribute("id", "delete1");
+            // delDiv.appendChild(del);
+
+        menu_card.appendChild(top);
+        menu_card.appendChild(bottom);
+        // menu_card.appendChild(delDiv);
+        
+        sp_menu_area.insertBefore(menu_card, addCard);
+
+    }
+    
+    function menu2 () {
+            let menu_card = document.createElement('div');
+        menu_card.setAttribute("id", "sp_menu_card_2");
+        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_2");
+            let top = document.createElement('div');
+            top.classList.add("text-center")
+            top.style.height = "200px";
+            top.style.lineHeight = "200px";
+            let imgButton = document.createElement('button');
+            imgButton.onclick=function(){document.getElementById("sp_menu_pic_name_2").click()};;
+            imgButton.classList.add("w-100", "click-image");
+            imgButton.setAttribute("id", "click_image_2");
+            imgButton.setAttribute("type", "button");
+            imgButton.innerHTML = "點擊選擇圖片";
+            let imgInput = document.createElement('input');
+            imgInput.style.display ="none";
+            imgInput.setAttribute("type", "file");
+            imgInput.setAttribute("id", "sp_menu_pic_name_2");
+            imgInput.setAttribute("name", "sp_menu_pic_name2");
+            imgInput.setAttribute("accept", ".jpg,.jpeg,.png,.gif");
+            top.appendChild(imgButton);
+            top.appendChild(imgInput);
+
+            let bottom = document.createElement('div');
+            bottom.classList.add("card-body", "d-flex", "justify-content-center");
+                let textInput = document.createElement('input');
+                textInput.classList.add("text-center", "menu-input");
+                textInput.setAttribute("type", "text");
+                textInput.setAttribute("id", "sp_menu2");
+                textInput.setAttribute("name", "sp_menu_name_2");
+                textInput.setAttribute("placeholder", "輸入特別菜單名");
+            bottom.appendChild(textInput);
+
+            // let delDiv = document.createElement('div');
+            // let del = document.createElement('i');
+            // del.classList.add("fas", "fa-trash");
+            // del.style.padding = ".5rem";
+            // del.setAttribute("id", "delete2");
+            // delDiv.appendChild(del);
+
+        menu_card.appendChild(top);
+        menu_card.appendChild(bottom);
+        // menu_card.appendChild(delDiv);
+        sp_menu_area.insertBefore(menu_card, addCard);
+    }
+
+    function menu3 () {
+        let menu_card = document.createElement('div');
+        menu_card.setAttribute("id", "sp_menu_card_3");
+        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_3");
+            let top = document.createElement('div');
+            top.classList.add("text-center")
+            top.style.height = "200px";
+            top.style.lineHeight = "200px";
+            let imgButton = document.createElement('button');
+            imgButton.onclick=function(){document.getElementById("sp_menu_pic_name_3").click()};;
+            imgButton.classList.add("w-100", "click-image");
+            imgButton.setAttribute("id", "click_image_3");
+            imgButton.setAttribute("type", "button");
+            imgButton.innerHTML = "點擊選擇圖片";
+            let imgInput = document.createElement('input');
+            imgInput.style.display ="none";
+            imgInput.setAttribute("type", "file");
+            imgInput.setAttribute("id", "sp_menu_pic_name_3");
+            imgInput.setAttribute("name", "sp_menu_pic_name3");
+            imgInput.setAttribute("accept", ".jpg,.jpeg,.png,.gif");
+            top.appendChild(imgButton);
+            top.appendChild(imgInput);
+
+
+            let bottom = document.createElement('div');
+            bottom.classList.add("card-body", "d-flex", "justify-content-center");
+                let textInput = document.createElement('input');
+                textInput.classList.add("text-center", "menu-input");
+                textInput.setAttribute("type", "text");
+                textInput.setAttribute("id", "sp_menu3");
+                textInput.setAttribute("name", "sp_menu_name_3");
+                textInput.setAttribute("placeholder", "輸入特別菜單名");
+            bottom.appendChild(textInput);
+
+            // let delDiv = document.createElement('div');
+            // let del = document.createElement('i');
+            // del.classList.add("fas", "fa-trash");
+            // del.style.padding = ".5rem";
+            // del.setAttribute("id", "delete3");
+            // delDiv.appendChild(del);
+
+        menu_card.appendChild(top);
+        menu_card.appendChild(bottom);
+        // menu_card.appendChild(delDiv);
+        sp_menu_area.insertBefore(menu_card, addCard);
+        addCard.remove();
+    }
+
+    addCard.addEventListener("click", function() {
+        // 新增第一張圖片
+        if (document.getElementsByClassName("sp-menu-card").length == 0 ){
+            menu1();
+        }
+
+        // 新增第二張圖片
+         else if (document.getElementsByClassName("sp-menu-card").length == 1){ 
+            menu2();
+     
+        } 
+
+        // 新增第三張圖片
+        else if (document.getElementsByClassName("sp-menu-card").length == 2) { 
+            menu3();
+   
+        }
+        
+    })
+
+    
+    addCard.addEventListener("click", function() {
+        if (document.getElementsByClassName("sp-menu-card").length == 1){
+
+            document.getElementById("sp_menu_pic_name_1").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_1").files;
+              if (file) {
+                document.getElementById("click_image_1").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_1").style.backgroundSize="contain";
+              }
+            }
+
+            // document.getElementById("delete1").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+        
+
+        }
+         else if (document.getElementsByClassName("sp-menu-card").length == 2) {
+            document.getElementById("sp_menu_pic_name_1").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_1").files;
+              if (file) {
+                document.getElementById("click_image_1").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_1").style.backgroundSize="contain";
+              }
+            }
+            // document.getElementById("delete1").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+
+            document.getElementById("sp_menu_pic_name_2").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_2").files;
+              if (file) {
+                document.getElementById("click_image_2").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_2").style.backgroundSize="contain";
+              }
+            }
+            // document.getElementById("delete2").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_2").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+            
+        } 
+        else if (document.getElementsByClassName("sp-menu-card").length == 3) {
+            document.getElementById("sp_menu_pic_name_1").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_1").files;
+              if (file) {
+                document.getElementById("click_image_1").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_1").style.backgroundSize="contain";
+              }
+            }
+            // document.getElementById("delete1").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+
+            document.getElementById("sp_menu_pic_name_2").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_2").files;
+              if (file) {
+                document.getElementById("click_image_2").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_2").style.backgroundSize="contain";
+              }
+            }
+            // document.getElementById("delete2").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_2").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+
+            document.getElementById("sp_menu_pic_name_3").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_3").files;
+              if (file) {
+                document.getElementById("click_image_3").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_3").style.backgroundSize="contain";
+              }
+            }
+            // document.getElementById("delete3").addEventListener("click", function() {
+            //     document.querySelectorAll(".sp_menu_card_3").forEach( item => {
+            //         item.remove()
+            //     })
+            // })
+        }
+    })
+
     function sendData(){
 
         res_name.nextElementSibling.innerHTML = '';
@@ -239,6 +557,8 @@ $pageName = "restaurant_add";
         fb_link.nextElementSibling.innerHTML = '';
         ig_link.nextElementSibling.innerHTML = '';
         booking_link.nextElementSibling.innerHTML = '';
+        picalert.innerHTML = '';
+        menualert.innerHTML = '';
 
         // 檢查資料是否輸入正確
         let isPass = true;
@@ -375,6 +695,53 @@ $pageName = "restaurant_add";
              菜單圖片最多上傳六張圖片
             </div>`;
         }
+        // // TODO:檢查特別菜單欄位有點BUG
+        if (!!document.getElementById("sp_menu_card_1")) {
+            if ( (document.querySelector("#sp_menu_pic_name_1").files.length == 0) && (document.querySelector("#sp_menu1").value.length != 0) ) {
+            isPass = false;
+            picalert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未上傳圖片
+            </div>`;
+            }
+            if ( (document.querySelector("#sp_menu_pic_name_1").files.length != 0) && (document.querySelector("#sp_menu1").value.length == 0) ) {
+            isPass = false;
+            menualert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未輸入特別菜單名
+            </div>`;
+            }
+        }
+        if (!!document.getElementById("sp_menu_card_2")) {
+            if ( (document.querySelector("#sp_menu_pic_name_2").files.length == 0) && (document.querySelector("#sp_menu2").value.length != 0) ) {
+            isPass = false;
+            picalert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未上傳圖片
+            </div>`;
+            }
+            if ( (document.querySelector("#sp_menu_pic_name_1").files.length != 0) && (document.querySelector("#sp_menu1").value.length == 0) ) {
+            isPass = false;
+            menualert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未輸入特別菜單名
+            </div>`;
+            }
+        }
+        if (!!document.getElementById("sp_menu_card_3")) {
+            if ( (document.querySelector("#sp_menu_pic_name_3").files.length == 0) && (document.querySelector("#sp_menu3").value.length != 0) ) {
+            isPass = false;
+            picalert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未上傳圖片
+            </div>`;
+            }
+            if ( (document.querySelector("#sp_menu_pic_name_1").files.length != 0) && (document.querySelector("#sp_menu1").value.length == 0) ) {
+            isPass = false;
+            menualert.innerHTML = `<div class="alert alert-dark mt-2" role="alert">
+             未輸入特別菜單名
+            </div>`;
+            }
+        }
+
+
+
+
 
 
         if (isPass === true) {
