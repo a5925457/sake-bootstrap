@@ -15,10 +15,20 @@ $pageName = "restaurant_add";
         background-color: #aaa;
         color:#ddd;
         border:none;
-        border-radius: .25rem .25rem 0 0
+        border-radius: .25rem .25rem 0 0;
+        transition: .5s
+    }
+    .click-image:hover {
+        background-color: #ccc;
+        color:#999;
     }
     input:focus {
-        border: none;
+        border:1px #aaa;
+        border-bottom-style: solid;
+        border-top-style: none;
+        border-left-style:none;
+        border-right-style:none;
+        width: 80%;
         outline: unset;
     }
     .menu-input {
@@ -27,7 +37,10 @@ $pageName = "restaurant_add";
         border-top-style: none;
         border-left-style:none;
         border-right-style:none;
-        width: 60%
+        width: 80%
+    }
+    .sp-menu-card .fas.fa-trash:hover {
+        color: #aaa
     }
 </style>
 <?php include __DIR__ . '\parts\__navbar.html'?>
@@ -209,12 +222,18 @@ $pageName = "restaurant_add";
                         <div class="mb-3">
                             <label class="form-label">特別菜單<small>（最多為3道）</small></label>
                             <div id="sp_menu_area" class="mb-2 d-flex flex-wrap">
+                                <div class="col-12 col-xl-4" id="cardarea1" style="display:none"></div>
+                                <div class="col-12 col-xl-4" id="cardarea2" style="display:none"></div>
+                                <div class="col-12 col-xl-4" id="cardarea3" style="display:none"></div>
                                 <!-- add card -->
-                                <div class="card col-12 col-xl-4 add-card" style="cursor: pointer">
-                                  <div class="card-body d-flex justify-content-center align-items-center plus-icon">
-                                      <i class="fas fa-plus-circle" style="color: #999;"></i>
-                                  </div>
+                                <div class="col-12 col-xl-4" style="cursor: pointer">
+                                    <div class="card add-card" style="height: 288px">
+                                        <div class="card-body d-flex justify-content-center align-items-center plus-icon" style="height: 288px">
+                                          <i class="fas fa-plus-circle" style="color: #999;"></i>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <!-- sp menu -->
                                 <!-- <div class="card col-12 col-xl-4" id="sp_menu_card_1">
                                     <div class="text-center" style="height:200px; line-height: 200px;">
@@ -287,9 +306,10 @@ $pageName = "restaurant_add";
     const menualert = document.querySelector("#menualert");
     
     function menu1 () {
+        document.querySelector("#cardarea1").style.display = "block";
         let menu_card = document.createElement('div');
         menu_card.setAttribute("id", "sp_menu_card_1");
-        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_1");
+        menu_card.classList.add("card", "sp-menu-card", "sp_menu_card_1");
             let top = document.createElement('div');
             top.classList.add("text-center")
             top.style.height = "200px";
@@ -320,26 +340,27 @@ $pageName = "restaurant_add";
                 textInput.setAttribute("placeholder", "輸入特別菜單名");
             bottom.appendChild(textInput);
 
-            // TODO: CARD 刪除
-            // let delDiv = document.createElement('div');
-            // let del = document.createElement('i');
-            // del.classList.add("fas", "fa-trash");
-            // del.style.padding = ".5rem";
-            // del.setAttribute("id", "delete1");
-            // delDiv.appendChild(del);
+            let delDiv = document.createElement('div');
+            delDiv.style.marginLeft = "auto";
+            let del = document.createElement('i');
+            del.classList.add("fas", "fa-trash");
+            del.style.padding = ".5rem";
+            del.setAttribute("id", "delete1");
+            delDiv.appendChild(del);
 
         menu_card.appendChild(top);
         menu_card.appendChild(bottom);
-        // menu_card.appendChild(delDiv);
+        menu_card.appendChild(delDiv);
         
-        sp_menu_area.insertBefore(menu_card, addCard);
+        document.querySelector("#cardarea1").appendChild(menu_card);
 
     }
     
     function menu2 () {
+        document.querySelector("#cardarea2").style.display = "block";
             let menu_card = document.createElement('div');
         menu_card.setAttribute("id", "sp_menu_card_2");
-        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_2");
+        menu_card.classList.add("card", "sp-menu-card", "sp_menu_card_2");
             let top = document.createElement('div');
             top.classList.add("text-center")
             top.style.height = "200px";
@@ -369,23 +390,25 @@ $pageName = "restaurant_add";
                 textInput.setAttribute("placeholder", "輸入特別菜單名");
             bottom.appendChild(textInput);
 
-            // let delDiv = document.createElement('div');
-            // let del = document.createElement('i');
-            // del.classList.add("fas", "fa-trash");
-            // del.style.padding = ".5rem";
-            // del.setAttribute("id", "delete2");
-            // delDiv.appendChild(del);
+            let delDiv = document.createElement('div');
+            delDiv.style.marginLeft = "auto";
+            let del = document.createElement('i');
+            del.classList.add("fas", "fa-trash");
+            del.style.padding = ".5rem";
+            del.setAttribute("id", "delete2");
+            delDiv.appendChild(del);
 
         menu_card.appendChild(top);
         menu_card.appendChild(bottom);
-        // menu_card.appendChild(delDiv);
-        sp_menu_area.insertBefore(menu_card, addCard);
+        menu_card.appendChild(delDiv);
+        document.querySelector("#cardarea2").appendChild(menu_card);
     }
 
     function menu3 () {
+        document.querySelector("#cardarea3").style.display = "block";
         let menu_card = document.createElement('div');
         menu_card.setAttribute("id", "sp_menu_card_3");
-        menu_card.classList.add("card", "col-12", "col-xl-4", "sp-menu-card", "sp_menu_card_3");
+        menu_card.classList.add("card", "sp-menu-card", "sp_menu_card_3");
             let top = document.createElement('div');
             top.classList.add("text-center")
             top.style.height = "200px";
@@ -416,18 +439,19 @@ $pageName = "restaurant_add";
                 textInput.setAttribute("placeholder", "輸入特別菜單名");
             bottom.appendChild(textInput);
 
-            // let delDiv = document.createElement('div');
-            // let del = document.createElement('i');
-            // del.classList.add("fas", "fa-trash");
-            // del.style.padding = ".5rem";
-            // del.setAttribute("id", "delete3");
-            // delDiv.appendChild(del);
+            let delDiv = document.createElement('div');
+            delDiv.style.marginLeft = "auto";
+            let del = document.createElement('i');
+            del.classList.add("fas", "fa-trash");
+            del.style.padding = ".5rem";
+            del.setAttribute("id", "delete3");
+            delDiv.appendChild(del);
 
         menu_card.appendChild(top);
         menu_card.appendChild(bottom);
-        // menu_card.appendChild(delDiv);
-        sp_menu_area.insertBefore(menu_card, addCard);
-        addCard.remove();
+        menu_card.appendChild(delDiv);
+        document.querySelector("#cardarea3").appendChild(menu_card);
+
     }
 
     addCard.addEventListener("click", function() {
@@ -437,23 +461,28 @@ $pageName = "restaurant_add";
         }
 
         // 新增第二張圖片
-         else if (document.getElementsByClassName("sp-menu-card").length == 1){ 
-            menu2();
-     
+         else if (document.getElementsByClassName("sp-menu-card").length == 1 ){ 
+            if (!document.getElementById("sp_menu_card_2")) {
+                menu2();
+            } else {
+                !document.getElementById("sp_menu_card_3") ? menu3() : menu1();
+            }
         } 
 
         // 新增第三張圖片
         else if (document.getElementsByClassName("sp-menu-card").length == 2) { 
-            menu3();
-   
+            if (!document.getElementById("sp_menu_card_3")) {
+                menu3();
+            } else {
+                !document.getElementById("sp_menu_card_1") ? menu1() : menu2();
+            }
         }
         
     })
 
     
     addCard.addEventListener("click", function() {
-        if (document.getElementsByClassName("sp-menu-card").length == 1){
-
+        if (!!document.getElementById("sp_menu_card_1")) {
             document.getElementById("sp_menu_pic_name_1").onchange = evt => {
               const [file] = document.getElementById("sp_menu_pic_name_1").files;
               if (file) {
@@ -462,69 +491,31 @@ $pageName = "restaurant_add";
               }
             }
 
-            // document.getElementById("delete1").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
-        
+            document.getElementById("delete1").addEventListener("click", function() {
+                document.querySelectorAll(".sp_menu_card_1").forEach( item => {
+                    item.remove()
+                })
+                document.querySelector("#cardarea1").style.display = "none";
+            })
+        }
+        if (!!document.getElementById("sp_menu_card_2")) {
+            document.getElementById("sp_menu_pic_name_2").onchange = evt => {
+              const [file] = document.getElementById("sp_menu_pic_name_2").files;
+              if (file) {
+                document.getElementById("click_image_2").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
+                document.getElementById("click_image_2").style.backgroundSize="contain";
+              }
+            }
+
+            document.getElementById("delete2").addEventListener("click", function() {
+                document.querySelectorAll(".sp_menu_card_2").forEach( item => {
+                    item.remove()
+                })
+                document.querySelector("#cardarea2").style.display = "none";
+            })
 
         }
-         else if (document.getElementsByClassName("sp-menu-card").length == 2) {
-            document.getElementById("sp_menu_pic_name_1").onchange = evt => {
-              const [file] = document.getElementById("sp_menu_pic_name_1").files;
-              if (file) {
-                document.getElementById("click_image_1").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
-                document.getElementById("click_image_1").style.backgroundSize="contain";
-              }
-            }
-            // document.getElementById("delete1").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
-
-            document.getElementById("sp_menu_pic_name_2").onchange = evt => {
-              const [file] = document.getElementById("sp_menu_pic_name_2").files;
-              if (file) {
-                document.getElementById("click_image_2").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
-                document.getElementById("click_image_2").style.backgroundSize="contain";
-              }
-            }
-            // document.getElementById("delete2").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_2").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
-            
-        } 
-        else if (document.getElementsByClassName("sp-menu-card").length == 3) {
-            document.getElementById("sp_menu_pic_name_1").onchange = evt => {
-              const [file] = document.getElementById("sp_menu_pic_name_1").files;
-              if (file) {
-                document.getElementById("click_image_1").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
-                document.getElementById("click_image_1").style.backgroundSize="contain";
-              }
-            }
-            // document.getElementById("delete1").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_1").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
-
-            document.getElementById("sp_menu_pic_name_2").onchange = evt => {
-              const [file] = document.getElementById("sp_menu_pic_name_2").files;
-              if (file) {
-                document.getElementById("click_image_2").style.background = `url("${URL.createObjectURL(file)}") no-repeat center center`;
-                document.getElementById("click_image_2").style.backgroundSize="contain";
-              }
-            }
-            // document.getElementById("delete2").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_2").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
-
+        if (!!document.getElementById("sp_menu_card_3")) {
             document.getElementById("sp_menu_pic_name_3").onchange = evt => {
               const [file] = document.getElementById("sp_menu_pic_name_3").files;
               if (file) {
@@ -532,11 +523,21 @@ $pageName = "restaurant_add";
                 document.getElementById("click_image_3").style.backgroundSize="contain";
               }
             }
-            // document.getElementById("delete3").addEventListener("click", function() {
-            //     document.querySelectorAll(".sp_menu_card_3").forEach( item => {
-            //         item.remove()
-            //     })
-            // })
+
+            document.getElementById("delete3").addEventListener("click", function() {
+                document.querySelectorAll(".sp_menu_card_3").forEach( item => {
+                    item.remove()
+                })
+                document.querySelector("#cardarea3").style.display = "none";
+            })
+        }
+    })
+
+    addEventListener("click", function() {
+        if (document.getElementsByClassName("sp-menu-card").length == 3) {
+            addCard.style.display = "none";
+        } else {
+            addCard.style.display = "block";
         }
     })
 
